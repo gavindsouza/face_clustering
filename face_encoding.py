@@ -1,5 +1,6 @@
 # imports - standard imports
 import time
+import datetime
 import os
 import pickle
 import multiprocessing
@@ -28,11 +29,17 @@ def make_data(img_name):
     boxes = face_recognition.face_locations(img, model='cnn')
     encodings = face_recognition.face_encodings(img, boxes)
 
-    data_img = [{"imagePath": img_path, "loc": box, "encoding": enc}
-         for (box, enc) in zip(boxes, encodings)]
-    
+    data_img = [
+        {
+            "time_stamp": datetime.datetime.utcnow(),
+            "image_path": img_path,
+            "box_loc": box,
+            "encoding": encode
+        }
+        for (box, encode) in zip(boxes, encodings)]
+
     ALL_DATA.extend(data_img)
-    
+
     PROGRESS = len(ALL_DATA)
     if PROGRESS % 100 == 0:
         print(f"{PROGRESS}/{TOTAL_IMG} images done...")
@@ -50,7 +57,6 @@ if __name__ == "__main__":
     new_list = [x for x in ALL_DATA]
     end = time.time()
     print(f"List converted in {end - start}s")
-    
+
     with open(PICKLE_PATH, 'wb') as f:
         f.write(pickle.dumps(new_list))
-    
