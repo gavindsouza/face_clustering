@@ -43,11 +43,11 @@ class Model:
 		if labels is None:
 			labels = self.predicted_labels
 
-		with open(f"{filename}.csv", "w") as f:
+		with open(f"temp_files/{filename}.csv", "w") as f:
 			for label_ in labels:
 				label, whole_data = label_
 
-				img_path = whole_data["img_path"],
+				img_path = whole_data["image_path"],
 				time_stamp = whole_data["time_stamp"],
 				box_loc = whole_data["box_loc"],
 				encoding = whole_data["encoding"],

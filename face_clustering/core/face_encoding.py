@@ -26,12 +26,12 @@ def make_data(img_name):
     img_path = os.path.join(DATA_PATH, img_name)
     img = np.asarray(Image.open(img_path))
 
-    boxes = face_recognition.face_locations(img, model='cnn')
+    boxes = face_recognition.face_locations(img, model='hog')
     encodings = face_recognition.face_encodings(img, boxes)
 
     data_img = [
         {
-            "time_stamp": datetime.datetime.utcnow(),
+            "time_stamp": str(datetime.datetime.utcnow()),
             "image_path": img_path,
             "box_loc": box,
             "encoding": encode
