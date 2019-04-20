@@ -1,6 +1,7 @@
 # imports - standard imports
 import pickle
 import os
+import sys
 from multiprocessing import cpu_count as num_jobs
 
 # imports - third party imports
@@ -20,14 +21,26 @@ class Model:
 		self.clt = choices[algorithm]
 
 
-	def load_data(self, db_path: str = "faces.pickle"):
-		file = open(db_path, "rb").read()
-		self.data = pickle.loads(file)
-		self.encodings = [row["encoding"] for row in self.data]
-		print("[INFO] Encodings Loaded!")
+	def load_data(self, data: list = None, pickle_path: str = None):
+		if data is not None:
+			try:
+				self.data = data
+				self.encodings = [row["encoding"] for row in self.data]
+			except:
+				print("Unexpected error:", sys.exc_info()[0])
+				raise
+				
+		elif pickle_path is not None:
+			file = open(pickle_path, "rb").read()
+			self.data = pickle.loads(file)
+			self.encodings = [row["encoding"] for row in self.data]
+			print("[INFO] Encodings Loaded!")
+		
+		else:
+			print("Need an input of encoded images")
 
 
-	def predict(self, enc: list=None): #, db_path: str = "faces.pickle"):
+	def predict(self, enc: list=None): #, pickle_path: str = "faces.pickle"):
 		if enc is None:
 			enc = self.encodings
 

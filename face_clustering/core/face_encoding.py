@@ -1,29 +1,24 @@
 # imports - standard imports
-import time
 import datetime
+import itertools
+import multiprocessing
 import os
 import pickle
-import multiprocessing
-from multiprocessing import Manager
+import sys
+import time
 
 # imports - third party imports
 import face_recognition
-from PIL import Image
 import numpy as np
+from PIL import Image
 
-
-DATA_PATH = r"/mnt/FOURTH/data/kaggle/faces-data/"
-# PICKLE_PATH = os.path.join(DATA_PATH, "faces.pickle")
-PICKLE_PATH = "faces.pickle"
-IMG_LIST = os.listdir(DATA_PATH)
-TOTAL_IMG = len(IMG_LIST)
+PROJECT_PATH = os.path.abspath(os.path.split(sys.argv[0])[0])
 num_process = multiprocessing.cpu_count()
-manager = Manager()
+manager = multiprocessing.Manager()
 ALL_DATA = manager.list()
 
 
-def make_data(img_name):
-    img_path = os.path.join(DATA_PATH, img_name)
+def encode_one(img_path: str, total_img: int = None, verbose: bool = False):
     img = np.asarray(Image.open(img_path))
 
     boxes = face_recognition.face_locations(img, model='hog')
@@ -40,23 +35,42 @@ def make_data(img_name):
 
     ALL_DATA.extend(data_img)
 
-    PROGRESS = len(ALL_DATA)
-    if PROGRESS % 100 == 0:
-        print(f"{PROGRESS}/{TOTAL_IMG} images done...")
+    if verbose:
+        progress = len(ALL_DATA)
+        if progress % 100 == 0:
+            print(f"{progress} faces from {total_img} images done...")
 
 
-if __name__ == "__main__":
+def encode_all(data_path: str, verbose: bool = False):
+    img_dir = os.listdir(data_path)
+    img_list = (os.path.join(data_path, img_name) for img_name in img_dir)
+    total_img = len(img_dir)
 
     start = time.time()
     with multiprocessing.Pool(num_process) as pool:
-        pool.map(make_data, IMG_LIST)
+        pool.starmap(encode_one, zip(img_list, itertools.repeat(
+            total_img, total_img), itertools.repeat(verbose, total_img)))
     end = time.time()
-    print(f"{len(ALL_DATA)} images in {end - start}s")
+
+    if verbose:
+        print(f"{len(ALL_DATA)} images in {end - start}s")
 
     start = time.time()
     new_list = [x for x in ALL_DATA]
     end = time.time()
-    print(f"List converted in {end - start}s")
 
-    with open(PICKLE_PATH, 'wb') as f:
-        f.write(pickle.dumps(new_list))
+    if verbose:
+        print(f"List converted in {end - start}s")
+
+    return new_list
+
+
+def save_encodes(encodes: list, pickle_path: str = None, verbose: bool = False):
+    if pickle_path is None:
+        pickle_path = os.path.join(PROJECT_PATH, "temp_files", "faces.pickle")
+
+    with open(pickle_path, 'wb') as f:
+        f.write(pickle.dumps(encodes))
+
+    if verbose:
+        print(f"Results of encoding saved as {pickle_path}")
