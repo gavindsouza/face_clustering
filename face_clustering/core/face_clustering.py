@@ -5,7 +5,6 @@ import sys
 from multiprocessing import cpu_count as num_jobs
 
 # imports - third party imports
-import cv2
 from sklearn.cluster import DBSCAN, KMeans, MeanShift
 from imutils import build_montages
 import numpy as np
@@ -52,7 +51,7 @@ class Model:
 		return self.predicted_labels
 
 	
-	def save_data(self, labels: list = None, filename: str = "results"):
+	def save_csv(self, labels: list = None, filename: str = "results"):
 		if labels is None:
 			labels = self.predicted_labels
 
