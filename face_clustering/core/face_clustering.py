@@ -16,7 +16,7 @@ class Model:
 		choices = {
 			"dbscan" : DBSCAN(metric="euclidean", n_jobs=num_jobs()),
 			"kmeans" : KMeans(precompute_distances='auto', n_jobs=num_jobs()),
-			"meanshift" : MeanShift()
+			"meanshift" : MeanShift(n_jobs=num_jobs())
 		}
 		self.clt = choices[algorithm]
 
@@ -40,7 +40,7 @@ class Model:
 			print("Need an input of encoded images")
 
 
-	def predict(self, enc: list=None): #, pickle_path: str = "faces.pickle"):
+	def predict(self, enc: list=None):
 		if enc is None:
 			enc = self.encodings
 
@@ -60,10 +60,10 @@ class Model:
 			for label_ in labels:
 				label, whole_data = label_
 
-				img_path = whole_data["image_path"],
-				time_stamp = whole_data["time_stamp"],
-				box_loc = whole_data["box_loc"],
-				encoding = whole_data["encoding"],
+				img_path = whole_data["image_path"]
+				time_stamp = whole_data["time_stamp"]
+				box_loc = whole_data["box_loc"]
+				encoding = whole_data["encoding"]
 				numeric_label = label
 
 				f.write(f"{img_path},{box_loc},{time_stamp},{numeric_label}\n")
