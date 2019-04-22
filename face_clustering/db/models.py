@@ -3,7 +3,13 @@ from numpy import array
 def entry(img_path: str, location_of_face: tuple, encoding: array):
     pass
 
-test_entry = {'imagePath': '/mnt/FOURTH/data/kaggle/faces-data/9326871.1.jpg', 'loc': (68, 139, 175, 32), 'encoding': array([-1.26975790e-01,  4.97269630e-02,  7.74217919e-02, -2.01154444e-02,
+test_entry = {
+       'imagePath': 
+              '/mnt/FOURTH/data/kaggle/faces-data/9326871.1.jpg', 
+       'loc': 
+              (68, 139, 175, 32), 
+       'encoding': 
+              array([-1.26975790e-01,  4.97269630e-02,  7.74217919e-02, -2.01154444e-02,
        -1.57296613e-01, -2.45222319e-02, -1.35518014e-02, -7.36326501e-02,
        -1.03756245e-02, -1.04380973e-01,  1.94168136e-01, -1.34159416e-01,
        -2.01466873e-01,  1.21488152e-02,  2.28909459e-02,  1.40917733e-01,

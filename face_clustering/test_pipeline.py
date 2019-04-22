@@ -1,3 +1,7 @@
+"""
+Make shift testing file
+probs use unittest here
+"""
 from core.face_clustering import Model
 from core.face_encoding import encode_all, save_encodes
 import pickle
@@ -17,8 +21,4 @@ if __name__ == "__main__":
     print(test_data[1]['encoding'])
     print(test_data[1]['time_stamp'])
     print(predicted[0])
-    model.save_data()
-
-    # file = open("temp_files/faces.pickle", "rb").read()
-    # data = pickle.loads(file)
-    # print(data[0])
+    model.save_csv()
