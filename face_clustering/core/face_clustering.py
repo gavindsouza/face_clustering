@@ -20,8 +20,18 @@ class Model:
 		self.clt = choices[algorithm]
 
 
-	def load_data(self, data: list = None, pickle_path: str = None):
-		if data is not None:
+	def load_data(self, from_db: tuple = None, data: list = None, pickle_path: str = None):
+		"""
+		::params:: type = default 
+		from_db: tuple = None
+		data: list = None
+		pickle_path: str = None
+		"""
+		if from_db is not None:
+			print("Definitely Untested")
+			self.data, self.encodings = list(zip(*from_db))
+
+		elif data is not None:
 			try:
 				self.data = data
 				self.encodings = [row["encoding"] for row in self.data]
@@ -60,9 +70,39 @@ class Model:
 				label, whole_data = label_
 
 				img_path = whole_data["image_path"]
-				time_stamp = whole_data["time_stamp"]
+				time_stamp = whole_data["encoded_time_stamp"]
 				box_loc = whole_data["box_loc"]
 				encoding = whole_data["encoding"]
 				numeric_label = label
 
 				f.write(f"{img_path},{box_loc},{time_stamp},{numeric_label}\n")
+
+	
+	def save_db(self, dbms: str = 'sqlite'):
+		if dbms is None:
+			print("Select between 'sqlite' and 'postgres'")
+		
+		if dbms is 'sqlite':
+			from face_clustering.db.SQLite3 import SQLite
+			db = SQLite()
+			for row in self.predicted_labels:
+				label, whole_data = row
+
+				img_path = whole_data["image_path"]
+				time_stamp = whole_data["time_stamp"]
+				box_loc = whole_data["box_loc"]
+				encoding = whole_data["encoding"]
+				numeric_label = label
+
+				db.entry(
+					img_path=img_path,
+					location_of_face=box_loc,
+					encoding=encoding,
+					time_stamp=time_stamp	
+				)
+			
+
+		elif dbms is 'postgres':
+			print("Well this isn't implemented yet\nWill be if proved advantageous to do so")
+		
+		return

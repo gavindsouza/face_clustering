@@ -26,7 +26,7 @@ def encode_one(img_path: str, total_img: int = None, verbose: bool = False):
 
     data_img = [
         {
-            "time_stamp": str(datetime.datetime.utcnow()),
+            "encoded_time_stamp": str(datetime.datetime.utcnow()),
             "image_path": img_path,
             "box_loc": box,
             "encoding": encode
