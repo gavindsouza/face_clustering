@@ -20,7 +20,7 @@ class Model:
 		self.clt = choices[algorithm]
 
 
-	def load_data(self, from_db: tuple = None, data: list = None, pickle_path: str = None):
+	def load_data(self, from_db: list = None, data: list = None, pickle_path: str = None):
 		"""
 		::params:: type = default 
 		from_db: tuple = None
@@ -65,20 +65,32 @@ class Model:
 		if labels is None:
 			labels = self.predicted_labels
 
+		# with open(f"temp_files/{filename}.csv", "w") as f:
+		# 	for label_ in labels:
+		# 		label, whole_data = label_
+
+		# 		img_path = whole_data["image_path"]
+		# 		time_stamp = whole_data["encoded_time_stamp"]
+		# 		box_loc = whole_data["box_loc"]
+		# 		encoding = whole_data["encoding"]
+		# 		numeric_label = label
+
+		# 		f.write(f"{img_path},{box_loc},{time_stamp},{numeric_label}\n")
+
+		import csv
+
 		with open(f"temp_files/{filename}.csv", "w") as f:
-			for label_ in labels:
-				label, whole_data = label_
-
-				img_path = whole_data["image_path"]
-				time_stamp = whole_data["encoded_time_stamp"]
-				box_loc = whole_data["box_loc"]
-				encoding = whole_data["encoding"]
-				numeric_label = label
-
-				f.write(f"{img_path},{box_loc},{time_stamp},{numeric_label}\n")
-
+			csv_out = csv.writer(f)
+			csv_out.writerow(['label', 'data'])
+			
+			for data in self.predicted_labels:
+				csv_out.writerow(data)
 	
+
 	def save_db(self, dbms: str = 'sqlite'):
+		print("Changes to be made\nUnfinished!")
+		return
+		
 		if dbms is None:
 			print("Select between 'sqlite' and 'postgres'")
 		

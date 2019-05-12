@@ -101,8 +101,10 @@ ENV/
 
 # others
 *.pickle
+*.pkl
 *.csv
 .directory
 .vscode
 .git
 temp_files
+test

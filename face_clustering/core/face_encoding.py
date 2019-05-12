@@ -24,14 +24,21 @@ def encode_one(img_path: str, total_img: int = None, verbose: bool = False):
     boxes = face_recognition.face_locations(img, model='hog')
     encodings = face_recognition.face_encodings(img, boxes)
 
+    # data_img = [
+    #     {
+    #         "encoded_time_stamp": str(datetime.datetime.utcnow()),
+    #         "image_path": img_path,
+    #         "box_loc": box,
+    #         "encoding": encode
+    #     }
+    #     for (box, encode) in zip(boxes, encodings)]
+
     data_img = [
-        {
-            "encoded_time_stamp": str(datetime.datetime.utcnow()),
-            "image_path": img_path,
-            "box_loc": box,
-            "encoding": encode
-        }
-        for (box, encode) in zip(boxes, encodings)]
+        (
+            img_path,
+            encoding
+        ) for encoding in encodings
+    ]
 
     ALL_DATA.extend(data_img)
 
