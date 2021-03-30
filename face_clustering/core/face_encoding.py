@@ -63,13 +63,12 @@ def encode_all(data_path: str, verbose: bool = False):
         print(f"{len(ALL_DATA)} images in {end - start}s")
 
     start = time.time()
-    new_list = [x for x in ALL_DATA]
     end = time.time()
 
     if verbose:
         print(f"List converted in {end - start}s")
 
-    return new_list
+    return [x for x in ALL_DATA]
 
 
 def save_encodes(encodes: list, pickle_path: str = None, verbose: bool = False):
