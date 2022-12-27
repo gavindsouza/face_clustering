@@ -21,7 +21,4 @@ class Image:
 
     @property
     def loc(self):
-        gps = {
-            GPSTAGS[k]: v for k, v in self.exif["GPSInfo"].items()  
-        }
-        return gps
+        return {GPSTAGS[k]: v for k, v in self.exif["GPSInfo"].items()}
