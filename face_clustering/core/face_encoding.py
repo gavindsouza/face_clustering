@@ -1,11 +1,10 @@
 # imports - standard imports
-import datetime
-import itertools
 import multiprocessing
 import os
 import pickle
 import sys
 import time
+from itertools import repeat
 
 # imports - third party imports
 import face_recognition
@@ -13,7 +12,7 @@ import numpy as np
 from PIL import Image
 
 PROJECT_PATH = os.path.abspath(os.path.split(sys.argv[0])[0])
-num_process = multiprocessing.cpu_count()
+num_process = multiprocessing.cpu_count() // 2
 manager = multiprocessing.Manager()
 ALL_DATA = manager.list()
 
@@ -50,26 +49,19 @@ def encode_one(img_path: str, total_img: int = None, verbose: bool = False):
 
 def encode_all(data_path: str, verbose: bool = False):
     img_dir = os.listdir(data_path)
-    img_list = (os.path.join(data_path, img_name) for img_name in img_dir)
-    total_img = len(img_dir)
+    img_list = [os.path.join(data_path, img_name) for img_name in img_dir if img_name.lower().endswith((".jpg", ".png", ".jpeg"))]
+    total_img = len(img_list)
+    args = list(zip(img_list, repeat(total_img, total_img), repeat(verbose, total_img)))
 
     start = time.time()
     with multiprocessing.Pool(num_process) as pool:
-        pool.starmap(encode_one, zip(img_list, itertools.repeat(
-            total_img, total_img), itertools.repeat(verbose, total_img)))
+        pool.starmap(encode_one, iterable=args)
     end = time.time()
 
     if verbose:
         print(f"{len(ALL_DATA)} images in {end - start}s")
 
-    start = time.time()
-    new_list = [x for x in ALL_DATA]
-    end = time.time()
-
-    if verbose:
-        print(f"List converted in {end - start}s")
-
-    return new_list
+    return [x for x in ALL_DATA]
 
 
 def save_encodes(encodes: list, pickle_path: str = None, verbose: bool = False):

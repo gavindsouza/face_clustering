@@ -10,7 +10,7 @@ import pickle
 
 if __name__ == "__main__":
     print("[IMP] This is only completed to the demo stage. Make sure test folder has no sub dirs or other files, only images. Results saved in 'temp_files/results.csv'")
-    IMG_FOLDER = input("Input Absolute path of folder: ")   # /mnt/FOURTH/data/kaggle/faces-data/
+    IMG_FOLDER = "/home/gavin/Pictures" or input("Input Absolute path of folder: ")   # /mnt/FOURTH/data/kaggle/faces-data/
 
     db = SQLite()
     print("DB instance created")
@@ -19,20 +19,20 @@ if __name__ == "__main__":
     # if already encoded and saved to pickle:
     # encodes = pickle.loads(open('test-encodes.pkl', 'rb').read())
     print("All images encoded")
-    
+
     db.enter_batch_encodings(encodes)
     print("Saved all encodes to DB")
-    
+
     encodes = db.get_encodes()
     print("Received all from DB")
-    
+
     model = Model("dbscan")
     model.load_data(from_db=encodes)
     print("Fit data on model")
-    
+
     predicted = model.predict()
     print("Predicted lebels")
-    
+
     model.save_csv()
     print("Saved CSV")
 
@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
     # Fix X and core_samples_mask
     X, core_sameples_mask = to_be_done()
-    
+
     colors = [plt.cm.Spectral(each) for each in np.linspace(0, 1, len(unique_labels))]
     for k, col in zip(unique_labels, colors):
         if k == -1:
