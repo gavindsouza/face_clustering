@@ -55,7 +55,7 @@ class Model:
 		print("[INFO] clustering...")
 
 		self.clt.fit(enc)
-		self.predicted_labels = [(label, whole_data) for label, whole_data in zip(self.clt.labels_, self.data)]
+		self.predicted_labels = list(zip(self.clt.labels_, self.data))
 
 		return self.predicted_labels
 
@@ -72,15 +72,10 @@ class Model:
 				csv_out.writerow(data)
 
 	def save_db(self, dbms: str = 'sqlite'):
-		print("Changes to be made\nUnfinished!")
-		return
-
-		if dbms is None:
-			print("Select between 'sqlite' and 'postgres'")
-
-		elif dbms == 'sqlite':
+		if dbms == 'sqlite':
 			from face_clustering.db.SQLite3 import SQLite
 			db = SQLite()
+
 			for row in self.predicted_labels:
 				label, whole_data = row
 
@@ -99,3 +94,8 @@ class Model:
 
 		elif dbms == 'postgres':
 			print("Well this isn't implemented yet\nWill be if proved advantageous to do so")
+			raise NotImplementedError
+
+		else:
+			print("Select between 'sqlite' and 'postgres'")
+			raise NotImplementedError
