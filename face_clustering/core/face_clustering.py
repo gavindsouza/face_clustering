@@ -79,29 +79,29 @@ class Model:
 				csv_out.writerow(data)
 
 	def save_db(self, dbms: str = 'sqlite'):
-		if dbms == 'sqlite':
+		if dbms == 'postgres':
+			logger.info("Well this isn't implemented yet\nWill be if proved advantageous to do so")
+			raise NotImplementedError
+
+		elif dbms == 'sqlite':
 			from face_clustering.db.SQLite3 import SQLite
 			db = SQLite()
 
 			for row in self.predicted_labels:
 				label, whole_data = row
 
+				numeric_label = label
+
 				img_path = whole_data["image_path"]
 				time_stamp = whole_data["time_stamp"]
 				box_loc = whole_data["box_loc"]
 				encoding = whole_data["encoding"]
-				numeric_label = label
-
 				db.entry(
 					img_path=img_path,
 					location_of_face=box_loc,
 					encoding=encoding,
 					time_stamp=time_stamp
 				)
-
-		elif dbms == 'postgres':
-			logger.info("Well this isn't implemented yet\nWill be if proved advantageous to do so")
-			raise NotImplementedError
 
 		else:
 			logger.info("Select between 'sqlite' and 'postgres'")

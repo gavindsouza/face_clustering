@@ -69,7 +69,7 @@ def encode_all(data_path: str, verbose: bool = False):
 
     logger.info(f"{len(ALL_DATA)} images in {end - start:.4}s")
 
-    return [x for x in ALL_DATA]
+    return list(ALL_DATA)
 
 
 def save_encodes(encodes: list, pickle_path: str = None, verbose: bool = False):
