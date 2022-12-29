@@ -1,3 +1,6 @@
+# imports - apply patches
+from face_clustering.patches import _istarmap
+
 # imports - standard imports
 import multiprocessing
 import os
@@ -14,6 +17,8 @@ from .. import __name__ as NAME
 import face_recognition
 import numpy as np
 from PIL import Image
+from tqdm import tqdm
+
 
 CWD = Path(os.getcwd())
 num_process = multiprocessing.cpu_count() // 2
@@ -46,25 +51,23 @@ def encode_one(img_path: str, total_img: int = None, verbose: bool = False):
 
     ALL_DATA.extend(data_img)
 
-    if verbose:
-        progress = len(ALL_DATA)
-        if progress % 100 == 0:
-            logger.info(f"{progress} faces from {total_img} images done...")
+    progress = len(ALL_DATA)
+    if progress % 100 == 0:
+        logger.info(f"{progress} faces from {total_img} images done...")
 
 
 def encode_all(data_path: str, verbose: bool = False):
-    img_dir = os.listdir(data_path)
-    img_list = [os.path.join(data_path, img_name) for img_name in img_dir if img_name.lower().endswith((".jpg", ".png", ".jpeg"))]
+    img_list = [os.path.join(data_path, img_name) for img_name in os.listdir(data_path) if img_name.lower().endswith((".jpg", ".png", ".jpeg"))]
     total_img = len(img_list)
     args = list(zip(img_list, repeat(total_img, total_img), repeat(verbose, total_img)))
 
     start = time.time()
     with multiprocessing.Pool(num_process) as pool:
-        pool.starmap(encode_one, iterable=args)
+        for _ in tqdm(pool.istarmap(encode_one, iterable=args), total=total_img):
+            pass
     end = time.time()
 
-    if verbose:
-        logger.info(f"{len(ALL_DATA)} images in {end - start}s")
+    logger.info(f"{len(ALL_DATA)} images in {end - start:.4}s")
 
     return [x for x in ALL_DATA]
 
@@ -76,5 +79,4 @@ def save_encodes(encodes: list, pickle_path: str = None, verbose: bool = False):
     with open(pickle_path, 'wb') as f:
         f.write(pickle.dumps(encodes))
 
-    if verbose:
-        logger.info(f"Results of encoding saved as {pickle_path}")
+    logger.info(f"Results of encoding saved as {pickle_path}")

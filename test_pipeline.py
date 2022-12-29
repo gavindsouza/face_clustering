@@ -11,33 +11,22 @@ from face_clustering.db.SQLite3 import SQLite
 
 if __name__ == "__main__":
     logger = logging.getLogger("test_pipeline")
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.NOTSET)
 
-    logger.info("[IMP] This is only completed to the demo stage. Make sure test folder has no sub dirs or other files, only images. Results saved in 'temp_files/results.csv'")
+    logger.info("This is only completed to the demo stage. Results saved in 'temp_files/results.csv'")
 
     IMG_FOLDER = "/home/gavin/Pictures" or input("Input Absolute path of folder: ")   # /mnt/FOURTH/data/kaggle/faces-data/
 
-    db = SQLite()
-    logger.info("DB instance created")
+    with SQLite() as db:
+        encodes = encode_all(IMG_FOLDER, verbose=True)
+        db.enter_batch_encodings(encodes)
+        encodes = db.get_encodes()
 
-    encodes = encode_all(IMG_FOLDER, verbose=True)
-    logger.info("All images encoded")
+        model = Model("dbscan")
+        model.load_data(from_db=encodes)
 
-    db.enter_batch_encodings(encodes)
-    logger.info("Saved all encodes to DB")
-
-    encodes = db.get_encodes()
-    logger.info("Received all from DB")
-
-    model = Model("dbscan")
-    model.load_data(from_db=encodes)
-    logger.info("Fit data on model")
-
-    predicted = model.predict()
-    logger.info("Predicted lebels")
-
-    model.save_csv()
-    logger.info("Saved CSV")
+        predictions = model.predict()
+        model.save_csv()
 
     """
     # Plot result

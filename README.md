@@ -26,8 +26,6 @@ Note: Currently all under `requirements.txt` are dev-requirements
 
 Link: `https://www.kaggle.com/gasgallo/faces-data`
 
-Make sure test folder has no sub dirs or other files, only images.
-
 4. Run `test_pipeline.py`
 ```
 $ python3 test_pipeline.py

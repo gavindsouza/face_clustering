@@ -45,12 +45,16 @@ class SQLite:
             )"""
         )
 
-    def __enter__(self):
-        return
+    def __post_init__(self):
+        logger.info(f"DB instance created as {self}")
 
-    def __exit__(self):
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
         self.cursor.close()
         self.connection.close()
+        logger.info("DB connection closed")
 
     def enter_label(self, img_path: str, label: int, location_of_face: tuple = None, encoding: np.array = None, time_stamp: object = None):
         # query = "INSERT INTO labels (img_path, loc_box, encoding, time_stamp) VALUES (?, ?, ?, ?)"
@@ -83,13 +87,16 @@ class SQLite:
         try:
             self.cursor.executemany("INSERT INTO encodings (img_path, encoding) VALUES (?, ?)", (data))
             self.connection.commit()
+            logger.info(f"Saved {len(data)} encodings to DB")
 
         except sqlite3.IntegrityError as integrityMessage:
             logger.exception(integrityMessage)
 
     def get_encodes(self):
         self.cursor.execute("SELECT * FROM encodings")
-        return self.cursor.fetchall()
+        encodings = self.cursor.fetchall()
+        logger.info(f"Fetched {len(encodings)} encodings from DB")
+        return encodings
 
     @staticmethod
     def adapt_array(arr):

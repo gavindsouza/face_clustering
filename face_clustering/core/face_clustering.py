@@ -40,7 +40,7 @@ class Model:
 			try:
 				self.data = data
 				self.encodings = [row["encoding"] for row in self.data]
-			except:
+			except Exception:
 				logger.info("Unexpected error:", sys.exc_info()[0])
 				raise
 
@@ -57,10 +57,12 @@ class Model:
 		if enc is None:
 			enc = self.encodings
 
-		logger.info("clustering...")
+		logger.info("clustering input data...")
 
 		self.clt.fit(enc)
 		self.predicted_labels = list(zip(self.clt.labels_, self.data))
+
+		logger.info(f"Predicted {len(self.predicted_labels)} encodings...")
 
 		return self.predicted_labels
 
