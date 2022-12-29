@@ -3,13 +3,18 @@ import csv
 import os
 import pickle
 import sys
+import logging
 from multiprocessing import cpu_count as num_jobs
+
+# imports - library imports
+from .. import __name__ as NAME
 
 # imports - third party imports
 import numpy as np
 from imutils import build_montages
 from sklearn.cluster import DBSCAN, KMeans, MeanShift
 
+logger = logging.getLogger(NAME)
 
 class Model:
 	def __init__(self, algorithm: str = "dbscan"):
@@ -28,7 +33,7 @@ class Model:
 		pickle_path: str = None
 		"""
 		if from_db is not None:
-			print("Definitely Untested")
+			logger.info("Definitely Untested")
 			self.data, self.encodings = list(zip(*from_db))
 
 		elif data is not None:
@@ -36,23 +41,23 @@ class Model:
 				self.data = data
 				self.encodings = [row["encoding"] for row in self.data]
 			except:
-				print("Unexpected error:", sys.exc_info()[0])
+				logger.info("Unexpected error:", sys.exc_info()[0])
 				raise
 
 		elif pickle_path is not None:
 			file = open(pickle_path, "rb").read()
 			self.data = pickle.loads(file)
 			self.encodings = [row["encoding"] for row in self.data]
-			print("[INFO] Encodings Loaded!")
+			logger.info("Encodings Loaded!")
 
 		else:
-			print("Need an input of encoded images")
+			logger.info("Need an input of encoded images")
 
 	def predict(self, enc: list=None):
 		if enc is None:
 			enc = self.encodings
 
-		print("[INFO] clustering...")
+		logger.info("clustering...")
 
 		self.clt.fit(enc)
 		self.predicted_labels = list(zip(self.clt.labels_, self.data))
@@ -93,9 +98,9 @@ class Model:
 				)
 
 		elif dbms == 'postgres':
-			print("Well this isn't implemented yet\nWill be if proved advantageous to do so")
+			logger.info("Well this isn't implemented yet\nWill be if proved advantageous to do so")
 			raise NotImplementedError
 
 		else:
-			print("Select between 'sqlite' and 'postgres'")
+			logger.info("Select between 'sqlite' and 'postgres'")
 			raise NotImplementedError

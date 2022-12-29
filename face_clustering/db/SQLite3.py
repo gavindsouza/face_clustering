@@ -1,10 +1,15 @@
 # imports - standard imports
 import pickle
 import sqlite3
+import logging
+
+# imports - library imports
+from .. import __name__ as NAME
 
 # imports - third party imports
 import numpy as np
 
+logger = logging.getLogger(NAME)
 
 class SQLite:
     """
@@ -15,7 +20,7 @@ class SQLite:
         self.db_name = db_name
 
         if self.db_name == ":memory:":
-            print("DB exists on primary memory, Encodings will not be saved !!!")
+            logger.debug("DB exists on primary memory, Encodings will not be saved !!!")
 
         self.connection = sqlite3.connect(self.db_name, detect_types=sqlite3.PARSE_DECLTYPES)
         self.cursor = self.connection.cursor()
@@ -55,7 +60,7 @@ class SQLite:
             self.connection.commit()
 
         except sqlite3.IntegrityError as integrityMessage:
-            print(integrityMessage)
+            logger.exception(integrityMessage)
 
     def enter_encoding(self, img_path: str, encoding: np.array, location_of_face: tuple = None, time_stamp: object = None):
         # query = "INSERT INTO encodings (img_path, loc_box, encoding, time_stamp) VALUES (?, ?, ?, ?)"
@@ -65,7 +70,7 @@ class SQLite:
             self.connection.commit()
 
         except sqlite3.IntegrityError as integrityMessage:
-            print(integrityMessage)
+            logger.exception(integrityMessage)
 
     def enter_batch_encodings(self, data: list, location_of_face: tuple = None, time_stamp: object = None):
         """
@@ -80,7 +85,7 @@ class SQLite:
             self.connection.commit()
 
         except sqlite3.IntegrityError as integrityMessage:
-            print(integrityMessage)
+            logger.exception(integrityMessage)
 
     def get_encodes(self):
         self.cursor.execute("SELECT * FROM encodings")
@@ -114,7 +119,7 @@ if __name__ == "__main__":
     encodes = db.get_encodes()
     shown = time.time()
 
-    print(
+    logger.info(
         f"Time to create object: {object_made - start}s\n" +
         f"Time to insert 10_000 rows: {done - object_made}s\n" +
         f"Time to retrieve 10_000 rows: {shown - done}s\n"

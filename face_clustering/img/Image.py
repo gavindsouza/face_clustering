@@ -1,9 +1,6 @@
-# imports - standard imports
-from pprint import pprint as print
-
 # imports - third party imports
-from PIL import Image as pil_im 
-from PIL.ExifTags import TAGS, GPSTAGS 
+from PIL import Image as pil_im
+from PIL.ExifTags import TAGS, GPSTAGS
 import numpy as np
 
 
@@ -17,11 +14,10 @@ class Image:
         }
 
     def __repr__(self):
-        return "<%s.%s image at 0x%X>" % (self.__class__.__module__, self.__class__.__name__,id(self))
+        return "<%s.%s image at 0x%X>" % (self.__class__.__module__, self.__class__.__name__, id(self))
 
     @property
     def loc(self):
-        gps = {
-            GPSTAGS[k]: v for k, v in self.exif["GPSInfo"].items()  
+        return {
+            GPSTAGS[k]: v for k, v in self.exif["GPSInfo"].items()
         }
-        return gps
