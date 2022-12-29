@@ -2,39 +2,42 @@
 Make shift testing file
 probs use unittest here
 """
-from core.face_clustering import Model
-from core.face_encoding import encode_all, save_encodes
-from db.SQLite3 import SQLite
+import logging
 
-import pickle
+from face_clustering.core.face_clustering import Model
+from face_clustering.core.face_encoding import encode_all
+from face_clustering.db.SQLite3 import SQLite
+
 
 if __name__ == "__main__":
-    print("[IMP] This is only completed to the demo stage. Make sure test folder has no sub dirs or other files, only images. Results saved in 'temp_files/results.csv'")
+    logger = logging.getLogger("test_pipeline")
+    logging.basicConfig(level=logging.INFO)
+
+    logger.info("[IMP] This is only completed to the demo stage. Make sure test folder has no sub dirs or other files, only images. Results saved in 'temp_files/results.csv'")
+
     IMG_FOLDER = "/home/gavin/Pictures" or input("Input Absolute path of folder: ")   # /mnt/FOURTH/data/kaggle/faces-data/
 
     db = SQLite()
-    print("DB instance created")
+    logger.info("DB instance created")
 
     encodes = encode_all(IMG_FOLDER, verbose=True)
-    # if already encoded and saved to pickle:
-    # encodes = pickle.loads(open('test-encodes.pkl', 'rb').read())
-    print("All images encoded")
+    logger.info("All images encoded")
 
     db.enter_batch_encodings(encodes)
-    print("Saved all encodes to DB")
+    logger.info("Saved all encodes to DB")
 
     encodes = db.get_encodes()
-    print("Received all from DB")
+    logger.info("Received all from DB")
 
     model = Model("dbscan")
     model.load_data(from_db=encodes)
-    print("Fit data on model")
+    logger.info("Fit data on model")
 
     predicted = model.predict()
-    print("Predicted lebels")
+    logger.info("Predicted lebels")
 
     model.save_csv()
-    print("Saved CSV")
+    logger.info("Saved CSV")
 
     """
     # Plot result

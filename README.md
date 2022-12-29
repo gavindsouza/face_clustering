@@ -30,7 +30,6 @@ Make sure test folder has no sub dirs or other files, only images.
 
 4. Run `test_pipeline.py`
 ```
-$ cd face_clustering
 $ python3 test_pipeline.py
 ```
 Results saved in 'temp_files/results.csv'
